@@ -3,11 +3,11 @@
         <item name="colorPrimary">@color/theme_dark_background</item>
         <item name="colorPrimaryVariant">@color/theme_dark_background</item>
         <item name="colorOnPrimary">@color/theme_text_primary</item>
-        
+
         <item name="colorSecondary">@color/theme_accent_orange</item>
         <item name="colorSecondaryVariant">@color/theme_accent_orange</item>
         <item name="colorOnSecondary">@color/white</item>
-        
+
         <item name="android:statusBarColor">@color/theme_dark_background</item>
 
         <!-- SỬA Ở ĐÂY: Áp dụng style mới cho SearchView mặc định -->
