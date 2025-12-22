@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Bảng màu mới: Nền tối và điểm nhấn Vàng Cam -->
+    <color name="theme_dark_background">#121212</color> <!-- Nền đen -->
+    <color name="theme_surface">#1E1E1E</color> <!-- Nền cho các thẻ CardView -->
+    <color name="theme_accent_orange">#FFA500</color> <!-- Màu vàng cam nhấn -->
+    <color name="theme_text_primary">#FFFFFF</color> <!-- Chữ chính màu trắng -->
+    <color name="theme_text_secondary">#A9A9A9</color> <!-- Chữ phụ màu xám nhạt -->
+    
+    <!-- MÀU MỚI: Lớp phủ mờ cho trang đăng nhập -->
+    <color name="login_overlay">#A6000000</color>
+
+</resources>

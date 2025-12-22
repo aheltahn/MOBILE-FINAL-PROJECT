@@ -1,0 +1,39 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Base.Theme.FinalProjectMẫu" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/theme_dark_background</item>
+        <item name="colorPrimaryVariant">@color/theme_dark_background</item>
+        <item name="colorOnPrimary">@color/theme_text_primary</item>
+        
+        <item name="colorSecondary">@color/theme_accent_orange</item>
+        <item name="colorSecondaryVariant">@color/theme_accent_orange</item>
+        <item name="colorOnSecondary">@color/white</item>
+        
+        <item name="android:statusBarColor">@color/theme_dark_background</item>
+
+        <!-- SỬA Ở ĐÂY: Áp dụng style mới cho SearchView mặc định -->
+        <item name="searchViewStyle">@style/App.SearchView</item>
+    </style>
+
+    <style name="Theme.FinalProjectMẫu" parent="Base.Theme.FinalProjectMẫu" />
+
+    <style name="ToolbarTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">
+        <item name="colorControlNormal">@color/white</item>
+    </style>
+
+    <!-- STYLE MỚI CHO SEARCHVIEW -->
+    <style name="App.SearchView" parent="Widget.AppCompat.SearchView">
+        <!-- Màu chữ khi nhập -->
+        <item name="android:textColorPrimary">@color/theme_text_primary</item>
+        <!-- Màu chữ gợi ý (hint) -->
+        <item name="android:textColorHint">@color/theme_text_secondary</item>
+        <!-- Màu của icon kính lúp, nút xóa (x) bên trong thanh tìm kiếm -->
+        <item name="android:tint">@color/theme_text_secondary</item>
+    </style>
+
+    <style name="Widget.App.Chip" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="chipBackgroundColor">@color/chip_background_color</item>
+        <item name="android:textColor">@color/chip_text_color</item>
+        <item name="chipStrokeColor">@color/theme_accent_orange</item>
+        <item name="chipStrokeWidth">1dp</item>
+    </style>
+</resources>
