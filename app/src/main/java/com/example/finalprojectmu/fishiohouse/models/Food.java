@@ -10,29 +10,43 @@ public class Food {
     private double price;
     private String description;
     private String imageUrl;
-    private String type;
+    private String type; // Thêm trường loại món ăn (VD: sushi, soup, drink)
 
     public Food() {}
 
-    public Food(String name, double price, String description, String imageUrl, String type) {}
+    public Food(String name, double price, String description, String imageUrl, String type) {
+        this.name = name;
+        this.price = price;
+        this.description = description;
+        this.imageUrl = imageUrl;
+        this.type = type;
+    }
 
-    public Food(String name, double price, String description, String imageUrl) {}
+    // Constructor cũ để tương thích code cũ (mặc định type là "other")
+    public Food(String name, double price, String description, String imageUrl) {
+        this.name = name;
+        this.price = price;
+        this.description = description;
+        this.imageUrl = imageUrl;
+        this.type = "other";
+    }
 
-    public String getId() { return null; }
-    public void setId(String id) { }
+    // Getters and Setters
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
-    public String getName() { return null; }
-    public void setName(String name) { }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public double getPrice() { return 0; }
-    public void setPrice(double price) { }
+    public double getPrice() { return price; }
+    public void setPrice(double price) { this.price = price; }
 
-    public String getDescription() { return null; }
-    public void setDescription(String description) { }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-    public String getImageUrl() { return null; }
-    public void setImageUrl(String imageUrl) { }
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 
-    public String getType() { return null; }
-    public void setType(String type) { }
+    public String getType() { return type; }
+    public void setType(String type) { this.type = type; }
 }

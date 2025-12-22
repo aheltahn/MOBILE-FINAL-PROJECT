@@ -1,5 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-</LinearLayout>
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardBackgroundColor="@color/theme_surface"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/imageViewFood"
+            android:layout_width="0dp"
+            android:layout_height="150dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+        <TextView
+            android:id="@+id/textViewFoodName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="12dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Yousei no mai jiru"
+            android:textColor="@color/theme_text_primary"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imageViewFood" />
+
+        <TextView
+            android:id="@+id/textViewFoodDesc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="Ramen, lotus root, daikon radish..."
+            android:textColor="@color/theme_text_secondary"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="@id/textViewFoodName"
+            app:layout_constraintStart_toStartOf="@id/textViewFoodName"
+            app:layout_constraintTop_toBottomOf="@id/textViewFoodName" />
+
+
+        <TextView
+            android:id="@+id/textViewFoodPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:text="120.000 VND"
+            android:textColor="@color/theme_text_primary"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/textViewFoodDesc"
+            app:layout_constraintTop_toBottomOf="@id/textViewFoodDesc" />
+
+        <ImageView
+            android:id="@+id/buttonAddToCart"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_add_circle"
+            android:padding="8dp"
+            android:background="@android:color/transparent"
+            app:tint="@color/theme_accent_orange"
+            app:layout_constraintBottom_toBottomOf="@id/textViewFoodPrice"
+            app:layout_constraintEnd_toEndOf="@id/textViewFoodDesc"
+            app:layout_constraintTop_toTopOf="@id/textViewFoodPrice" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>
