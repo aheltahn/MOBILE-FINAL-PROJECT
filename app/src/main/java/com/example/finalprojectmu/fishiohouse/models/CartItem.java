@@ -11,34 +11,60 @@ public class CartItem {
     private long quantity;
     private String imageUrl;
 
-    @Exclude
-    private boolean isSelected = true;
+    @Exclude // Không lưu trường này vào Firestore
+    private boolean isSelected = true; // Mặc định là được chọn
 
     public CartItem() {}
 
-    public String getFoodId() { return null; }
+    // Getters and Setters
+    public String getFoodId() {
+        return foodId;
+    }
 
-    public void setFoodId(String foodId) {}
+    public void setFoodId(String foodId) {
+        this.foodId = foodId;
+    }
 
-    public String getName() { return null; }
+    public String getName() {
+        return name;
+    }
 
-    public void setName(String name) {}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public double getPrice() { return 0; }
+    public double getPrice() {
+        return price;
+    }
 
-    public void setPrice(double price) {}
+    public void setPrice(double price) {
+        this.price = price;
+    }
 
-    public long getQuantity() { return 0; }
+    public long getQuantity() {
+        return quantity;
+    }
 
-    public void setQuantity(long quantity) {}
+    public void setQuantity(long quantity) {
+        this.quantity = quantity;
+    }
 
-    public String getImageUrl() { return null; }
+    public String getImageUrl() {
+        return imageUrl;
+    }
 
-    public void setImageUrl(String imageUrl) {}
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    // Getter và Setter cho trạng thái được chọn
+    @Exclude
+    public boolean isSelected() {
+        return isSelected;
+    }
 
     @Exclude
-    public boolean isSelected() { return false; }
-
-    @Exclude
-    public void setSelected(boolean selected) {}
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
 }
