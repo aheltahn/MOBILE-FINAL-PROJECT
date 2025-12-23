@@ -4,12 +4,16 @@ import android.app.Activity; // THÊM IMPORT NÀY
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
+
 import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.finalprojectmu.R;
 import com.example.finalprojectmu.fishiohouse.adapters.FoodAdapter;
+import com.example.finalprojectmu.fishiohouse.data.DatabaseHelper;
+import com.example.finalprojectmu.fishiohouse.data.ProductEntity;
 import com.example.finalprojectmu.fishiohouse.models.Food;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -18,6 +22,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends BaseActivity {
     private static final String TAG = "MainActivity";
@@ -28,6 +33,7 @@ public class MainActivity extends BaseActivity {
     // =====================================================================
 
     private FirebaseFirestore db;
+    private DatabaseHelper dbHelper; // Thêm DatabaseHelper
     private RecyclerView recyclerView;
     private ArrayList<Food> foodList;
     private ArrayList<Food> fullFoodList;
@@ -80,6 +86,10 @@ public class MainActivity extends BaseActivity {
         searchView = findViewById(R.id.search_view);
         setupSearch();
 
+        // Bước 1: Load dữ liệu từ SQLite trước (để dùng offline)
+        loadFoodsFromLocal();
+
+        // Bước 2: Load dữ liệu từ Firestore (để lấy mới nhất và sync về local)
         loadFoodsFromFirestore();
     }
 
@@ -102,6 +112,26 @@ public class MainActivity extends BaseActivity {
     }
 
     // --- CÁC HÀM CÒN LẠI CỦA BẠN GIỮ NGUYÊN KHÔNG ĐỔI ---
+    // Hàm load dữ liệu từ SQLite
+    private void loadFoodsFromLocal() {
+        List<ProductEntity> localProducts = dbHelper.getAllProducts();
+        if (localProducts != null && !localProducts.isEmpty()) {
+            fullFoodList.clear();
+            for (ProductEntity entity : localProducts) {
+                Food food = new Food(
+                        entity.getName(),
+                        entity.getPrice(),
+                        entity.getDescription(),
+                        entity.getImageUrl(),
+                        entity.getType()
+                );
+                food.setId(entity.getId());
+                fullFoodList.add(food);
+            }
+            applyFilters();
+            // Toast.makeText(this, "Đã tải " + fullFoodList.size() + " món ăn từ bộ nhớ máy", Toast.LENGTH_SHORT).show();
+        }
+    }
 
     private void loadFoodsFromFirestore() {
         db.collection("foods")
@@ -113,20 +143,51 @@ public class MainActivity extends BaseActivity {
 
                     if (value != null) {
                         fullFoodList.clear();
+                        List<ProductEntity> productsToSync = new ArrayList<>();
+
                         for (DocumentSnapshot doc : value.getDocuments()) {
                             try {
                                 Food food = doc.toObject(Food.class);
                                 if (food != null) {
                                     food.setId(doc.getId());
                                     fullFoodList.add(food);
+
+                                    // Tạo đối tượng Entity để lưu vào SQLite
+                                    productsToSync.add(new ProductEntity(
+                                            food.getId(),
+                                            food.getName(),
+                                            food.getPrice(),
+                                            food.getDescription(),
+                                            food.getImageUrl(),
+                                            food.getType()
+                                    ));
                                 }
                             } catch (Exception e) {
                                 Log.e(TAG, "Lỗi khi chuyển đổi món ăn: " + doc.getId(), e);
                             }
                         }
+                        
+                        // Cập nhật giao diện
                         applyFilters();
+
+                        // Bước 3: Đồng bộ dữ liệu về SQLite (Sync)
+                        syncDataToLocal(productsToSync);
                     }
                 });
+    }
+
+    // Hàm lưu dữ liệu vào SQLite
+    private void syncDataToLocal(List<ProductEntity> products) {
+        new Thread(() -> {
+            // Xóa dữ liệu cũ để đảm bảo đồng bộ chính xác với server (bao gồm cả việc xóa món ăn)
+            dbHelper.deleteAllProducts();
+            
+            // Lưu dữ liệu mới
+            for (ProductEntity product : products) {
+                dbHelper.insertOrUpdateProduct(product);
+            }
+            Log.d(TAG, "Đã đồng bộ " + products.size() + " món ăn về SQLite");
+        }).start();
     }
 
     private void setupSearch() {
