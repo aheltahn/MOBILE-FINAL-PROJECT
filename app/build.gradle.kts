@@ -45,6 +45,9 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-storage")
+    // Thêm thư viện Google Sign-In
+    implementation("com.google.android.gms:play-services-auth:21.0.0")
+
     implementation("androidx.recyclerview:recyclerview:1.3.2")
     implementation("androidx.cardview:cardview:1.0.0")
     implementation("com.squareup.picasso:picasso:2.8")

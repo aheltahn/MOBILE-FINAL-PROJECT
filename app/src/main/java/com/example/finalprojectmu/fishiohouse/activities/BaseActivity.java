@@ -12,6 +12,8 @@ import androidx.annotation.LayoutRes;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.finalprojectmu.R;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
@@ -34,7 +36,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         TextView menuButton = headerView.findViewById(R.id.header_menu_button);
         ImageView avatar = headerView.findViewById(R.id.header_avatar);
 
-        // SỬA Ở ĐÂY: Thêm kiểm tra null trước khi gán sự kiện
         if (menuButton != null) {
             menuButton.setOnClickListener(v -> {
                 if (!(this instanceof MainActivity)) {
@@ -61,12 +62,18 @@ public abstract class BaseActivity extends AppCompatActivity {
                 startActivity(new Intent(this, OrderHistoryActivity.class));
                 return true;
             } else if (itemId == R.id.action_logout) {
+                // Đăng xuất Firebase
                 mAuth.signOut();
-                Toast.makeText(this, "Đã đăng xuất", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(this, LoginActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-                finish();
+                
+                // Đăng xuất Google (Thêm mới)
+                GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build();
+                GoogleSignIn.getClient(this, gso).signOut().addOnCompleteListener(task -> {
+                    Toast.makeText(this, "Đã đăng xuất", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(this, LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                });
                 return true;
             }
             return false;
