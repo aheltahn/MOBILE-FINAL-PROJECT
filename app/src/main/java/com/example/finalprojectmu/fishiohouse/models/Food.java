@@ -4,34 +4,33 @@ import com.google.firebase.firestore.Exclude;
 
 public class Food {
     @Exclude
-    private String id;
+    private String id; // ID này sẽ không được lưu vào Firestore, chỉ dùng trong app
 
     private String name;
     private double price;
     private String description;
     private String imageUrl;
-    private String type; // Thêm trường loại món ăn (VD: sushi, soup, drink)
 
+    // ================== THAY ĐỔI QUAN TRỌNG ==================
+    // Đổi tên 'type' thành 'category' để khớp với tên trường trên Firebase
+    private String category;
+    // =======================================================
+
+    // Bắt buộc phải có một constructor rỗng để Firestore có thể tự động chuyển đổi document thành đối tượng Food
     public Food() {}
 
-    public Food(String name, double price, String description, String imageUrl, String type) {
+    // Constructor đầy đủ (có thể dùng khi bạn tạo món ăn mới)
+    public Food(String name, double price, String description, String imageUrl, String category) {
         this.name = name;
         this.price = price;
         this.description = description;
         this.imageUrl = imageUrl;
-        this.type = type;
+        this.category = category; // Sửa ở đây
     }
 
-    // Constructor cũ để tương thích code cũ (mặc định type là "other")
-    public Food(String name, double price, String description, String imageUrl) {
-        this.name = name;
-        this.price = price;
-        this.description = description;
-        this.imageUrl = imageUrl;
-        this.type = "other";
-    }
+    // --- Getters and Setters ---
+    // Các hàm getter/setter cho các thuộc tính khác được giữ nguyên
 
-    // Getters and Setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
@@ -47,6 +46,8 @@ public class Food {
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 
-    public String getType() { return type; }
-    public void setType(String type) { this.type = type; }
+    // ================== SỬA GETTER VÀ SETTER CHO PHÙ HỢP ==================
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
+    // =====================================================================
 }

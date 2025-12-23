@@ -9,6 +9,7 @@
     <color name="theme_accent_orange">#FFA500</color> <!-- Màu vàng cam nhấn -->
     <color name="theme_text_primary">#FFFFFF</color> <!-- Chữ chính màu trắng -->
     <color name="theme_text_secondary">#A9A9A9</color> <!-- Chữ phụ màu xám nhạt -->
+    <color name="theme_accent_red">#FF5252</color>
 
     <!-- MÀU MỚI: Lớp phủ mờ cho trang đăng nhập -->
     <color name="login_overlay">#A6000000</color>

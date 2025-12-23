@@ -4,4 +4,5 @@
     <item android:color="@color/white" android:state_checked="true"/>
     <!-- Mặc định (không được chọn) -->
     <item android:color="@color/theme_text_secondary"/>
+
 </selector>
