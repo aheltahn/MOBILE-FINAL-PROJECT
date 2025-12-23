@@ -51,7 +51,7 @@
 
                     <!-- Text overlay: nửa bên trái, căn giữa dọc, chữ nhỏ hơn, không hiệu ứng -->
                     <LinearLayout
-                        android:layout_width="250dp"
+                        android:layout_width="268dp"
                         android:layout_height="match_parent"
                         android:gravity="center_vertical"
                         android:orientation="vertical"
@@ -60,16 +60,16 @@
 
                         <TextView
                             android:id="@+id/textViewTitle"
-                            android:layout_width="wrap_content"
+                            android:layout_width="205dp"
                             android:layout_height="wrap_content"
                             android:text="FISHIO HOUSE"
                             android:textColor="@color/theme_accent_orange"
-                            android:textSize="25sp"
+                            android:textSize="31sp"
                             android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/textViewSubtitle"
-                            android:layout_width="188dp"
+                            android:layout_width="205dp"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
                             android:text="Trải nghiệm hương vị Nhật Bản tinh tế ngay tại nhà bạn"
@@ -93,10 +93,10 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="5dp"
+                    android:paddingTop="0dp"
                     android:paddingBottom="5dp"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginEnd="5dp"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginEnd="0dp"
                     android:text="Fishio House là điểm đến dành cho những thực khách trân trọng giá trị của ẩm thực Nhật Bản tinh tế. Từng nguyên liệu hải sản được tuyển chọn khắt khe, đảm bảo độ tươi ngon và chất lượng thượng hạng, kết hợp cùng kỹ thuật chế biến chuẩn mực để tạo nên những món sushi hài hòa về hương vị và thẩm mỹ.\n \nFishio House – Nơi nghệ thuật sushi được tôn vinh bằng sự tinh tế và đẳng cấp."
                     android:textColor="@color/theme_text_secondary"
                     android:textSize="16sp"
@@ -262,11 +262,13 @@
                         android:textSize="12sp"
                         android:textStyle="bold" />
 
+
+                    <!-- Cột 2: SĐT đặt hàng -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:text="(123)456 78 90"
+                        android:text="(123)456 78 90\n(098)765 43 21\n(246)801 35 79"
                         android:textColor="@color/theme_text_secondary"
                         android:textSize="10sp" />
                 </LinearLayout>
@@ -294,7 +296,7 @@
                         android:textSize="10sp" />
                 </LinearLayout>
 
-                <!-- Cột 2: SĐT đặt hàng -->
+
 
                 <!-- Cột 3: Tham gia cùng chúng tôi -->
                 <LinearLayout
@@ -315,7 +317,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:text="Instagram\nX\nThread"
+                        android:text="Instagram\nThreads\n𝕏"
                         android:textColor="@color/theme_text_secondary"
                         android:textSize="10sp" />
                 </LinearLayout>
@@ -339,12 +341,46 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:text="MasterCard"
+                        android:text="MasterCard\nZaloPay\nMomo"
                         android:textColor="@color/theme_text_secondary"
                         android:textSize="10sp" />
                 </LinearLayout>
             </LinearLayout>
-    </LinearLayout>
+                <!-- THÊM ĐƯỜNG KẺ NGANG MẢNH Ở DƯỚI FOOTER -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#FF444444"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="5dp" />
+
+                <!-- Dòng dưới đường kẻ: Bên trái bản quyền, bên phải Gmail -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="5dp">
+
+                    <!-- Bên trái: Bản quyền hoặc nội dung bạn muốn -->
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="© 2025 Fishio House. All rights reserved."
+                        android:textColor="@color/theme_text_secondary"
+                        android:textSize="10sp" />
+
+                    <!-- Bên phải: Gmail -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="✉️ fishiohouse@gmail.com"
+                        android:textColor="@color/theme_text_secondary"
+                        android:textSize="10sp"
+                        android:gravity="end" />
+                </LinearLayout>
+            </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
