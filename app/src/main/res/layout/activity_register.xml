@@ -27,66 +27,110 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Lớp 3: Nội dung (CANH GIỮA MÀN HÌNH) -->
-    <LinearLayout
+    <!-- Lớp 3: Nội dung (Dùng ScrollView để tránh bị che khi bàn phím hiện lên) -->
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="32dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tạo tài khoản"
-            android:textColor="@color/white"
-            android:textSize="32sp"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/editTextEmail"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:backgroundTint="@color/white"
-            android:hint="Email"
-            android:inputType="textEmailAddress"
-            android:textColor="@color/white"
-            android:textColorHint="@color/theme_text_secondary" />
+            android:orientation="vertical"
+            android:padding="32dp"
+            android:layout_gravity="center">
 
-        <EditText
-            android:id="@+id/editTextPassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:backgroundTint="@color/white"
-            android:hint="Mật khẩu (ít nhất 6 ký tự)"
-            android:inputType="textPassword"
-            android:textColor="@color/white"
-            android:textColorHint="@color/theme_text_secondary" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tạo tài khoản"
+                android:textColor="@color/white"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                android:layout_marginTop="40dp"/>
 
-        <Button
-            android:id="@+id/buttonRegister"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginTop="32dp"
-            android:backgroundTint="@color/theme_accent_orange"
-            android:text="Đăng Ký"
-            android:textSize="18sp"
-            app:cornerRadius="16dp" />
+            <!-- Trường nhập tên -->
+            <EditText
+                android:id="@+id/editTextName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:backgroundTint="@color/white"
+                android:hint="Tên người dùng"
+                android:inputType="textPersonName"
+                android:textColor="@color/white"
+                android:textColorHint="@color/theme_text_secondary" />
 
-        <TextView
-            android:id="@+id/textViewGoToLogin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="16dp"
-            android:text="Đã có tài khoản? Đăng nhập"
-            android:textColor="@color/white" />
+            <!-- Trường nhập email -->
+            <EditText
+                android:id="@+id/editTextEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="@color/white"
+                android:hint="Email"
+                android:inputType="textEmailAddress"
+                android:textColor="@color/white"
+                android:textColorHint="@color/theme_text_secondary" />
 
-    </LinearLayout>
+            <!-- Trường nhập số điện thoại -->
+            <EditText
+                android:id="@+id/editTextPhone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="@color/white"
+                android:hint="Số điện thoại"
+                android:inputType="phone"
+                android:textColor="@color/white"
+                android:textColorHint="@color/theme_text_secondary" />
+
+            <!-- Trường nhập mật khẩu -->
+            <EditText
+                android:id="@+id/editTextPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="@color/white"
+                android:hint="Mật khẩu (ít nhất 6 ký tự)"
+                android:inputType="textPassword"
+                android:textColor="@color/white"
+                android:textColorHint="@color/theme_text_secondary" />
+
+            <!-- Trường nhập lại mật khẩu -->
+            <EditText
+                android:id="@+id/editTextConfirmPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="@color/white"
+                android:hint="Nhập lại mật khẩu"
+                android:inputType="textPassword"
+                android:textColor="@color/white"
+                android:textColorHint="@color/theme_text_secondary" />
+
+            <Button
+                android:id="@+id/buttonRegister"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="32dp"
+                android:backgroundTint="@color/theme_accent_orange"
+                android:text="Đăng Ký"
+                android:textSize="18sp"
+                app:cornerRadius="16dp" />
+
+            <TextView
+                android:id="@+id/textViewGoToLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="40dp"
+                android:text="Đã có tài khoản? Đăng nhập"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

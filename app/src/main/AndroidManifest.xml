@@ -18,10 +18,14 @@
 
         <!-- Activity khởi động (Login) -->
         <activity
+            android:name=".fishiohouse.activities.OrderTrackingActivity"
+            android:exported="false" />
+        <activity
             android:name=".fishiohouse.activities.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
