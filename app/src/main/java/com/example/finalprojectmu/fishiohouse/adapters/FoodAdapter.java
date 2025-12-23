@@ -1,10 +1,11 @@
 package com.example.finalprojectmu.fishiohouse.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView; // Sửa ở đây, không dùng Button nữa
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -12,11 +13,13 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.finalprojectmu.R;
+import com.example.finalprojectmu.fishiohouse.activities.FoodDetailActivity;
 import com.example.finalprojectmu.fishiohouse.models.Food;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Transaction;
 import com.squareup.picasso.Picasso;
 
 import java.text.NumberFormat;
@@ -47,38 +50,59 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
     @Override
     public void onBindViewHolder(@NonNull FoodViewHolder holder, int position) {
         Food food = foodList.get(position);
-        if (food == null) return;
 
         holder.name.setText(food.getName());
-        holder.description.setText(food.getDescription()); // Thêm dòng này
 
+        // Định dạng giá tiền
         NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
         holder.price.setText(currencyFormatter.format(food.getPrice()));
 
-        if (food.getImageUrl() != null && !food.getImageUrl().isEmpty()) {
-            Picasso.get().load(food.getImageUrl()).into(holder.image);
+        // Hiển thị mô tả (nếu có)
+        if (food.getDescription() != null && !food.getDescription().isEmpty()) {
+            holder.description.setText(food.getDescription());
+            holder.description.setVisibility(View.VISIBLE);
         } else {
-            holder.image.setImageResource(R.mipmap.ic_launcher); // Ảnh mặc định
+            holder.description.setVisibility(View.GONE);
         }
 
-        holder.addToCartButton.setOnClickListener(v -> {
-            if (uid == null) {
-                Toast.makeText(context, "Vui lòng đăng nhập để thêm vào giỏ hàng", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            addToCart(food);
+        // Tải ảnh món ăn
+        if (food.getImageUrl() != null && !food.getImageUrl().isEmpty()) {
+            Picasso.get()
+                    .load(food.getImageUrl())
+                    .fit()
+                    .centerCrop()
+                    .placeholder(R.mipmap.ic_launcher)
+                    .error(R.mipmap.ic_launcher_round)
+                    .into(holder.image);
+        } else {
+            holder.image.setImageResource(R.mipmap.ic_launcher);
+        }
+
+        // === CLICK VÀO ẢNH MÓN ĂN → MỞ CHI TIẾT ===
+        holder.image.setOnClickListener(v -> {
+            Intent intent = new Intent(context, FoodDetailActivity.class);
+            intent.putExtra("FOOD_DETAIL", food);
+            context.startActivity(intent);
         });
+
+        // === NÚT THÊM VÀO GIỎ HÀNG (giữ nguyên chức năng cũ) ===
+        holder.addToCartButton.setOnClickListener(v -> addToCart(food));
     }
 
     private void addToCart(Food food) {
-        if (food.getId() == null) {
-            Toast.makeText(context, "Lỗi: Món ăn không hợp lệ", Toast.LENGTH_SHORT).show();
+        if (uid == null) {
+            Toast.makeText(context, "Bạn cần đăng nhập để thêm vào giỏ hàng", Toast.LENGTH_SHORT).show();
             return;
         }
-        DocumentReference cartItemRef = db.collection("carts").document(uid).collection("items").document(food.getId());
 
-        db.runTransaction(transaction -> {
+        DocumentReference cartItemRef = db.collection("carts")
+                .document(uid)
+                .collection("items")
+                .document(food.getId());
+
+        db.runTransaction((Transaction.Function<Void>) transaction -> {
             DocumentSnapshot snapshot = transaction.get(cartItemRef);
+
             if (snapshot.exists()) {
                 Long currentQuantity = snapshot.getLong("quantity");
                 if (currentQuantity == null) currentQuantity = 0L;
@@ -107,16 +131,16 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
 
     public static class FoodViewHolder extends RecyclerView.ViewHolder {
         ImageView image;
-        TextView name, price, description; // Thêm description
-        ImageView addToCartButton; // SỬA Ở ĐÂY: từ Button sang ImageView
+        TextView name, price, description;
+        ImageView addToCartButton; // Đây là ImageView (ic_add_circle)
 
         public FoodViewHolder(@NonNull View itemView) {
             super(itemView);
             image = itemView.findViewById(R.id.imageViewFood);
             name = itemView.findViewById(R.id.textViewFoodName);
             price = itemView.findViewById(R.id.textViewFoodPrice);
-            description = itemView.findViewById(R.id.textViewFoodDesc); // Thêm dòng này
-            addToCartButton = itemView.findViewById(R.id.buttonAddToCart); // Sửa ở đây
+            description = itemView.findViewById(R.id.textViewFoodDesc);
+            addToCartButton = itemView.findViewById(R.id.buttonAddToCart);
         }
     }
 }

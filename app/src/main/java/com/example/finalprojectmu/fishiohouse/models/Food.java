@@ -1,8 +1,9 @@
 package com.example.finalprojectmu.fishiohouse.models;
 
 import com.google.firebase.firestore.Exclude;
+import java.io.Serializable;
 
-public class Food {
+public class Food implements java.io.Serializable {
     @Exclude
     private String id;
 

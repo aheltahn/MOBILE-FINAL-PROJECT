@@ -1,6 +1,7 @@
 package com.example.finalprojectmu.fishiohouse.activities;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import androidx.appcompat.widget.SearchView;
@@ -17,7 +18,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
-// SỬA Ở ĐÂY: Thừa kế lại từ BaseActivity
 public class MainActivity extends BaseActivity {
     private static final String TAG = "MainActivity";
 
@@ -38,30 +38,42 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Header đã được BaseActivity xử lý, không cần code ở đây
-
         db = FirebaseFirestore.getInstance();
 
         recyclerView = findViewById(R.id.recyclerViewFoods);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        fabCart = findViewById(R.id.fab_cart);
+        chipGroupCategories = findViewById(R.id.chipGroupCategories);
+        searchView = findViewById(R.id.search_view);
 
         foodList = new ArrayList<>();
         fullFoodList = new ArrayList<>();
         foodAdapter = new FoodAdapter(this, foodList);
         recyclerView.setAdapter(foodAdapter);
 
-        fabCart = findViewById(R.id.fab_cart);
+        // === RESPONSIVE: TỰ ĐỘNG THAY ĐỔI SỐ CỘT THEO HƯỚNG MÀN HÌNH ===
+        updateGridLayout();
+
         if (fabCart != null) {
             fabCart.setOnClickListener(view -> startActivity(new Intent(MainActivity.this, CartActivity.class)));
         }
 
-        chipGroupCategories = findViewById(R.id.chipGroupCategories);
         setupCategoryFilter();
-
-        searchView = findViewById(R.id.search_view);
         setupSearch();
-
         loadFoodsFromFirestore();
+    }
+
+    // Hàm này sẽ được gọi khi xoay màn hình (onConfigurationChanged) hoặc lúc khởi tạo
+    private void updateGridLayout() {
+        int orientation = getResources().getConfiguration().orientation;
+        int spanCount = (orientation == Configuration.ORIENTATION_LANDSCAPE) ? 4 : 2;
+        recyclerView.setLayoutManager(new GridLayoutManager(this, spanCount));
+    }
+
+    // Để xử lý khi xoay màn hình mà không recreate Activity (tùy chọn, mượt hơn)
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        updateGridLayout(); // Cập nhật lại số cột khi xoay
     }
 
     private void loadFoodsFromFirestore() {
@@ -104,7 +116,7 @@ public class MainActivity extends BaseActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                currentSearchText = newText;
+                currentSearchText = newText.toLowerCase().trim();
                 applyFilters();
                 return true;
             }
@@ -137,13 +149,15 @@ public class MainActivity extends BaseActivity {
         for (Food food : fullFoodList) {
             boolean matchCategory = currentCategory.equals("all") ||
                     (food.getType() != null && food.getType().equalsIgnoreCase(currentCategory));
+
             boolean matchSearch = currentSearchText.isEmpty() ||
-                    (food.getName() != null && food.getName().toLowerCase().contains(currentSearchText.toLowerCase()));
+                    (food.getName() != null && food.getName().toLowerCase().contains(currentSearchText));
 
             if (matchCategory && matchSearch) {
                 foodList.add(food);
             }
         }
+
         if (foodAdapter != null) {
             foodAdapter.notifyDataSetChanged();
         }

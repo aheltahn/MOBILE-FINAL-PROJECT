@@ -16,6 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FinalProjectMẫu">
 
+        <!-- Activity khởi động (Login) -->
         <activity
             android:name=".fishiohouse.activities.LoginActivity"
             android:exported="true">
@@ -25,12 +26,36 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".fishiohouse.activities.RegisterActivity" />
-        <activity android:name=".fishiohouse.activities.MainActivity" />
-        <activity android:name=".fishiohouse.activities.CartActivity" />
-        <activity android:name=".fishiohouse.activities.OrderHistoryActivity" />
-        <activity android:name=".fishiohouse.activities.ProfileActivity" />
-        <activity android:name=".fishiohouse.activities.HomeActivity" />
+        <!-- Các Activity khác - KHÔNG KHÓA HƯỚNG nữa -->
+        <activity
+            android:name=".fishiohouse.activities.RegisterActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".fishiohouse.activities.HomeActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".fishiohouse.activities.MainActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".fishiohouse.activities.FoodDetailActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".fishiohouse.activities.CartActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".fishiohouse.activities.OrderHistoryActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".fishiohouse.activities.ProfileActivity"
+            android:exported="false" />
+
+        <!-- Nếu có AddFoodActivity hoặc activity khác, thêm tương tự -->
 
     </application>
 
