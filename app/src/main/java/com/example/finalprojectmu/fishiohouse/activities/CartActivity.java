@@ -1,5 +1,6 @@
 package com.example.finalprojectmu.fishiohouse.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,7 +21,6 @@ import com.example.finalprojectmu.fishiohouse.adapters.CartAdapter;
 import com.example.finalprojectmu.fishiohouse.models.CartItem;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
@@ -33,6 +33,10 @@ import java.util.Map;
 
 public class CartActivity extends AppCompatActivity implements CartAdapter.OnCartActionListener {
 
+    // ================== THAY ĐỔI 1: THÊM BIẾN INSTANCE ==================
+    private static CartActivity instance;
+    // ===================================================================
+
     private RecyclerView recyclerView;
     private TextView txtTotal;
     private Button btnPlaceOrder;
@@ -43,12 +47,20 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
     private ArrayList<CartItem> cartItems;
     private CartAdapter cartAdapter;
 
-    // THÊM VÀO: Map để lưu trạng thái chọn của người dùng
     private final Map<String, Boolean> selectionState = new HashMap<>();
+
+    // ================== THAY ĐỔI 2: THÊM HÀM LẤY INSTANCE ==================
+    public static CartActivity getInstance() {
+        return instance;
+    }
+    // =====================================================================
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // ================== THAY ĐỔI 3: GÁN INSTANCE ==================
+        instance = this;
+        // ================================================================
         setContentView(R.layout.activity_cart);
 
         Toolbar toolbar = findViewById(R.id.toolbar_cart);
@@ -68,8 +80,11 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
 
         loadCartItems();
 
-        btnPlaceOrder.setOnClickListener(v -> placeOrder());
+        btnPlaceOrder.setText("Thanh Toán");
+        btnPlaceOrder.setOnClickListener(v -> goToCheckout());
     }
+
+    // --- CÁC HÀM CÒN LẠI GIỮ NGUYÊN KHÔNG ĐỔI ---
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -97,7 +112,6 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
                 .addSnapshotListener((value, error) -> {
                     if (error != null) return;
 
-                    // SỬA Ở ĐÂY: Lưu trạng thái chọn hiện tại
                     for (CartItem item : cartItems) {
                         selectionState.put(item.getFoodId(), item.isSelected());
                     }
@@ -108,12 +122,9 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
                             CartItem item = doc.toObject(CartItem.class);
                             if (item != null) {
                                 item.setFoodId(doc.getId());
-
-                                // SỬA Ở ĐÂY: Phục hồi lại trạng thái chọn
                                 if (selectionState.containsKey(item.getFoodId())) {
                                     item.setSelected(selectionState.get(item.getFoodId()));
-                                } // Nếu không có, nó sẽ dùng giá trị mặc định là true
-
+                                }
                                 cartItems.add(item);
                             }
                         }
@@ -134,42 +145,22 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
         txtTotal.setText("Tạm tính: " + currencyFormatter.format(total));
     }
 
-    private void placeOrder() {
-        if (uid == null) return;
-
+    private void goToCheckout() {
         ArrayList<CartItem> selectedItems = new ArrayList<>();
-        double total = 0;
         for (CartItem item : cartItems) {
             if (item.isSelected()) {
                 selectedItems.add(item);
-                total += item.getPrice() * item.getQuantity();
             }
         }
 
         if (selectedItems.isEmpty()) {
-            Toast.makeText(this, "Vui lòng chọn ít nhất 1 sản phẩm", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Vui lòng chọn ít nhất một sản phẩm để thanh toán", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        Map<String, Object> order = new HashMap<>();
-        order.put("userId", uid);
-        order.put("totalPrice", total);
-        order.put("status", "Pending");
-        order.put("createdAt", FieldValue.serverTimestamp());
-
-        double finalTotal = total;
-        db.collection("orders").add(order)
-                .addOnSuccessListener(documentReference -> {
-                    WriteBatch batch = db.batch();
-                    for (CartItem item : selectedItems) {
-                        batch.delete(db.collection("carts").document(uid).collection("items").document(item.getFoodId()));
-                    }
-                    batch.commit().addOnSuccessListener(aVoid -> {
-                        Toast.makeText(this, "Đặt hàng thành công với tổng tiền " + finalTotal + " VND", Toast.LENGTH_LONG).show();
-                        finish();
-                    });
-                })
-                .addOnFailureListener(e -> Toast.makeText(this, "Đặt hàng thất bại", Toast.LENGTH_SHORT).show());
+        Intent intent = new Intent(CartActivity.this, CheckoutActivity.class);
+        intent.putExtra("SELECTED_ITEMS", selectedItems);
+        startActivity(intent);
     }
 
     private void showDeleteAllConfirmationDialog() {

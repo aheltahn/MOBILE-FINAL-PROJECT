@@ -24,9 +24,13 @@ public class AddFoodActivity extends AppCompatActivity {
 
     private static final int PICK_IMAGE_REQUEST = 1;
 
+    // =========================================================================
+    // SỬA LỖI Ở ĐÂY: Đổi tên biến cho khớp với tên đã sử dụng bên dưới
+    // =========================================================================
     private ImageView imageViewPreview;
-    private EditText editName, editPrice, editDesc;
-    private Button btnSelectImage, btnAddFood;
+    private EditText editTextFoodName, editTextFoodPrice, editTextFoodDesc, editTextFoodCategory;
+    private Button buttonSelectImage, buttonAddFood;
+    // =========================================================================
 
     private Uri imageUri;
     private FirebaseStorage storage;
@@ -40,16 +44,18 @@ public class AddFoodActivity extends AppCompatActivity {
         storage = FirebaseStorage.getInstance();
         db = FirebaseFirestore.getInstance();
 
+        // Bây giờ các dòng findViewById này sẽ khớp với tên biến đã khai báo
         imageViewPreview = findViewById(R.id.imageViewPreview);
-        editName = findViewById(R.id.editTextFoodName);
-        editPrice = findViewById(R.id.editTextFoodPrice);
-        editDesc = findViewById(R.id.editTextFoodDesc);
-        btnSelectImage = findViewById(R.id.buttonSelectImage);
-        btnAddFood = findViewById(R.id.buttonAddFood);
+        editTextFoodName = findViewById(R.id.editTextFoodName);
+        editTextFoodPrice = findViewById(R.id.editTextFoodPrice);
+        editTextFoodDesc = findViewById(R.id.editTextFoodDesc);
+        editTextFoodCategory = findViewById(R.id.editTextFoodCategory);
 
-        btnSelectImage.setOnClickListener(v -> openFileChooser());
+        buttonSelectImage = findViewById(R.id.buttonSelectImage);
+        buttonAddFood = findViewById(R.id.buttonAddFood);
 
-        btnAddFood.setOnClickListener(v -> uploadImageAndSaveFood());
+        buttonSelectImage.setOnClickListener(v -> openFileChooser());
+        buttonAddFood.setOnClickListener(v -> uploadImageAndSaveFood());
     }
 
     private void openFileChooser() {
@@ -70,23 +76,23 @@ public class AddFoodActivity extends AppCompatActivity {
     }
 
     private void uploadImageAndSaveFood() {
-        String name = editName.getText().toString().trim();
-        String priceStr = editPrice.getText().toString().trim();
-        String desc = editDesc.getText().toString().trim();
+        // Các dòng getText() này cũng sẽ hoạt động vì tên biến đã đúng
+        String name = editTextFoodName.getText().toString().trim();
+        String priceStr = editTextFoodPrice.getText().toString().trim();
+        String desc = editTextFoodDesc.getText().toString().trim();
+        String category = editTextFoodCategory.getText().toString().trim();
 
-        if (name.isEmpty() || priceStr.isEmpty() || imageUri == null) {
-            Toast.makeText(this, "Vui lòng nhập đủ tên, giá và chọn ảnh", Toast.LENGTH_SHORT).show();
+        if (name.isEmpty() || priceStr.isEmpty() || category.isEmpty() || imageUri == null) {
+            Toast.makeText(this, "Vui lòng nhập đủ thông tin và chọn ảnh", Toast.LENGTH_SHORT).show();
             return;
         }
 
         double price = Double.parseDouble(priceStr);
-
-        // Tạo tên file ngẫu nhiên để không bị trùng
         String fileName = UUID.randomUUID().toString() + ".jpg";
         StorageReference ref = storage.getReference("food_images/" + fileName);
 
         Toast.makeText(this, "Đang tải ảnh lên...", Toast.LENGTH_SHORT).show();
-        btnAddFood.setEnabled(false); // Khóa nút để tránh bấm nhiều lần
+        buttonAddFood.setEnabled(false);
 
         ref.putFile(imageUri)
                 .continueWithTask(task -> {
@@ -98,16 +104,16 @@ public class AddFoodActivity extends AppCompatActivity {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Uri downloadUri = task.getResult();
-                        saveFoodToFirestore(name, price, desc, downloadUri.toString());
+                        saveFoodToFirestore(name, price, desc, downloadUri.toString(), category);
                     } else {
                         Toast.makeText(this, "Lỗi tải ảnh: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                        btnAddFood.setEnabled(true);
+                        buttonAddFood.setEnabled(true);
                     }
                 });
     }
 
-    private void saveFoodToFirestore(String name, double price, String desc, String imageUrl) {
-        Food food = new Food(name, price, desc, imageUrl);
+    private void saveFoodToFirestore(String name, double price, String desc, String imageUrl, String category) {
+        Food food = new Food(name, price, desc, imageUrl, category);
 
         db.collection("foods")
                 .add(food)
@@ -117,7 +123,7 @@ public class AddFoodActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Lỗi lưu dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    btnAddFood.setEnabled(true);
+                    buttonAddFood.setEnabled(true);
                 });
     }
 }

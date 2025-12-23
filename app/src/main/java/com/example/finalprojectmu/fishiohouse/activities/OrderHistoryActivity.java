@@ -1,5 +1,6 @@
 package com.example.finalprojectmu.fishiohouse.activities;
 
+import android.content.Intent; // THÊM VÀO
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -18,8 +19,10 @@ import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
 
-// SỬA Ở ĐÂY: Thừa kế từ BaseActivity
-public class OrderHistoryActivity extends BaseActivity {
+// ================================================================
+// ==== BƯỚC 1: IMPLEMENT INTERFACE CỦA ADAPTER ====
+// ================================================================
+public class OrderHistoryActivity extends BaseActivity implements OrderAdapter.OnOrderClickListener {
 
     private static final String TAG = "OrderHistoryActivity";
 
@@ -35,8 +38,6 @@ public class OrderHistoryActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_history);
 
-        // Header đã được xử lý trong BaseActivity
-
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
@@ -44,7 +45,12 @@ public class OrderHistoryActivity extends BaseActivity {
         recyclerViewOrders.setLayoutManager(new LinearLayoutManager(this));
 
         orderList = new ArrayList<>();
-        orderAdapter = new OrderAdapter(this, orderList);
+
+        // ================================================================
+        // ==== BƯỚC 2: TRUYỀN 'this' VÀO CONSTRUCTOR CỦA ADAPTER ====
+        // ================================================================
+        // Giờ đây, Adapter sẽ biết Activity nào đang lắng nghe nó
+        orderAdapter = new OrderAdapter(this, orderList, this);
         recyclerViewOrders.setAdapter(orderAdapter);
 
         loadOrderHistory();
@@ -80,5 +86,23 @@ public class OrderHistoryActivity extends BaseActivity {
                         Log.d(TAG, "Tải thành công " + orderList.size() + " đơn hàng.");
                     }
                 });
+    }
+
+    // ================================================================
+    // ==== BƯỚC 3: VIẾT HÀM XỬ LÝ SỰ KIỆN CLICK TỪ ADAPTER ====
+    // ================================================================
+    @Override
+    public void onOrderClick(String orderId) {
+        // Khi người dùng nhấn vào một item trong RecyclerView,
+        // Adapter sẽ gọi hàm này và truyền orderId vào đây.
+
+        // Tạo Intent để mở màn hình theo dõi
+        Intent intent = new Intent(OrderHistoryActivity.this, OrderTrackingActivity.class);
+
+        // Gửi ID của đơn hàng vừa được nhấn sang
+        intent.putExtra("ORDER_ID", orderId);
+
+        // Bắt đầu Activity mới
+        startActivity(intent);
     }
 }

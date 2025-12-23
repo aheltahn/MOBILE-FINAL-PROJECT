@@ -8,70 +8,82 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
             android:text="THÊM MÓN ĂN MỚI"
             android:textColor="@color/theme_text_primary"
             android:textSize="24sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="24dp"/>
+            android:textStyle="bold" />
 
         <ImageView
             android:id="@+id/imageViewPreview"
             android:layout_width="200dp"
             android:layout_height="200dp"
-            android:src="@mipmap/ic_launcher"
+            android:background="@color/theme_surface"
             android:scaleType="centerCrop"
-            android:background="@color/theme_surface"/>
+            android:src="@mipmap/ic_launcher" />
 
         <Button
             android:id="@+id/buttonSelectImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Chọn Ảnh"
+            android:layout_marginTop="8dp"
             android:backgroundTint="@color/theme_accent_orange"
-            android:layout_marginTop="8dp"/>
+            android:text="Chọn Ảnh" />
 
         <EditText
             android:id="@+id/editTextFoodName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:hint="Tên món ăn (VD: Salmon Sushi)"
             android:textColor="@color/theme_text_primary"
-            android:textColorHint="@color/theme_text_secondary"
-            android:layout_marginTop="16dp"/>
+            android:textColorHint="@color/theme_text_secondary" />
 
         <EditText
             android:id="@+id/editTextFoodPrice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:hint="Giá tiền (VD: 50000)"
-            android:textColor="@color/theme_text_primary"
-            android:textColorHint="@color/theme_text_secondary"
             android:inputType="numberDecimal"
-            android:layout_marginTop="8dp"/>
+            android:textColor="@color/theme_text_primary"
+            android:textColorHint="@color/theme_text_secondary" />
 
         <EditText
             android:id="@+id/editTextFoodDesc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Mô tả món ăn"
-            android:textColor="@color/theme_text_primary"
-            android:textColorHint="@color/theme_text_secondary"
             android:layout_marginTop="8dp"
-            android:minLines="2"/>
+            android:hint="Mô tả món ăn"
+            android:minLines="2"
+            android:textColor="@color/theme_text_primary"
+            android:textColorHint="@color/theme_text_secondary" />
+
+        <!-- ================= SỬA LẠI Ở ĐÂY ================= -->
+        <!-- Thêm EditText cho Category -->
+        <EditText
+            android:id="@+id/editTextFoodCategory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="Danh mục (VD: Sushi, Cơm, Lẩu)"
+            android:textColor="@color/theme_text_primary"
+            android:textColorHint="@color/theme_text_secondary" />
+        <!-- =================================================== -->
 
         <Button
             android:id="@+id/buttonAddFood"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Lưu Món Ăn"
+            android:layout_marginTop="24dp"
             android:backgroundTint="@color/theme_accent_orange"
-            android:layout_marginTop="24dp"/>
+            android:text="Lưu Món Ăn" />
 
     </LinearLayout>
 </ScrollView>

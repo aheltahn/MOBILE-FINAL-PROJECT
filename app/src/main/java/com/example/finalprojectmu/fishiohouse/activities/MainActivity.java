@@ -1,5 +1,6 @@
 package com.example.finalprojectmu.fishiohouse.activities;
 
+import android.app.Activity; // THÊM IMPORT NÀY
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +15,7 @@ import com.example.finalprojectmu.fishiohouse.adapters.FoodAdapter;
 import com.example.finalprojectmu.fishiohouse.data.DatabaseHelper;
 import com.example.finalprojectmu.fishiohouse.data.ProductEntity;
 import com.example.finalprojectmu.fishiohouse.models.Food;
+import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -24,6 +26,11 @@ import java.util.List;
 
 public class MainActivity extends BaseActivity {
     private static final String TAG = "MainActivity";
+
+    // ================== THÊM CÁC BIẾN QUẢN LÝ ACTIVITY ==================
+    private static MainActivity instance;
+    public static ArrayList<Activity> activityList = new ArrayList<>();
+    // =====================================================================
 
     private FirebaseFirestore db;
     private DatabaseHelper dbHelper; // Thêm DatabaseHelper
@@ -38,13 +45,22 @@ public class MainActivity extends BaseActivity {
     private String currentCategory = "all";
     private String currentSearchText = "";
 
+    // ================== THÊM HÀM LẤY INSTANCE ==================
+    public static MainActivity getInstance() {
+        return instance;
+    }
+    // ==========================================================
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
-        // Khởi tạo DatabaseHelper
-        dbHelper = new DatabaseHelper(this);
+        // ================== THÊM CÁC DÒNG QUẢN LÝ ==================
+        instance = this;
+        activityList.add(this); // Thêm chính nó vào danh sách
+        // =========================================================
+
+        setContentView(R.layout.activity_main);
 
         db = FirebaseFirestore.getInstance();
 
@@ -58,11 +74,14 @@ public class MainActivity extends BaseActivity {
 
         fabCart = findViewById(R.id.fab_cart);
         if (fabCart != null) {
-            fabCart.setOnClickListener(view -> startActivity(new Intent(MainActivity.this, CartActivity.class)));
+            fabCart.setOnClickListener(view -> {
+                Intent intent = new Intent(MainActivity.this, CartActivity.class);
+                startActivity(intent);
+            });
         }
 
         chipGroupCategories = findViewById(R.id.chipGroupCategories);
-        setupCategoryFilter();
+        loadCategoriesAndSetupFilter();
 
         searchView = findViewById(R.id.search_view);
         setupSearch();
@@ -74,6 +93,25 @@ public class MainActivity extends BaseActivity {
         loadFoodsFromFirestore();
     }
 
+    // ================== THÊM HÀM ĐÓNG ACTIVITY CON ==================
+    public void finishChildActivities() {
+        for (Activity activity : activityList) {
+            if (activity != null && !(activity instanceof MainActivity)) {
+                activity.finish();
+            }
+        }
+        activityList.clear();
+        activityList.add(this); // Giữ lại MainActivity
+    }
+    // =============================================================
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        activityList.remove(this); // Xóa activity khỏi danh sách khi bị hủy
+    }
+
+    // --- CÁC HÀM CÒN LẠI CỦA BẠN GIỮ NGUYÊN KHÔNG ĐỔI ---
     // Hàm load dữ liệu từ SQLite
     private void loadFoodsFromLocal() {
         List<ProductEntity> localProducts = dbHelper.getAllProducts();
@@ -99,7 +137,7 @@ public class MainActivity extends BaseActivity {
         db.collection("foods")
                 .addSnapshotListener((value, error) -> {
                     if (error != null) {
-                        Log.e(TAG, "Listen failed.", error);
+                        Log.e(TAG, "Lỗi khi tải món ăn.", error);
                         return;
                     }
 
@@ -112,9 +150,6 @@ public class MainActivity extends BaseActivity {
                                 Food food = doc.toObject(Food.class);
                                 if (food != null) {
                                     food.setId(doc.getId());
-                                    if (food.getType() == null) {
-                                        food.setType("other");
-                                    }
                                     fullFoodList.add(food);
 
                                     // Tạo đối tượng Entity để lưu vào SQLite
@@ -128,7 +163,7 @@ public class MainActivity extends BaseActivity {
                                     ));
                                 }
                             } catch (Exception e) {
-                                Log.e(TAG, "Lỗi đọc dữ liệu món ăn: " + doc.getId(), e);
+                                Log.e(TAG, "Lỗi khi chuyển đổi món ăn: " + doc.getId(), e);
                             }
                         }
                         
@@ -173,23 +208,47 @@ public class MainActivity extends BaseActivity {
         });
     }
 
-    private void setupCategoryFilter() {
+    private void loadCategoriesAndSetupFilter() {
         if (chipGroupCategories == null) return;
+        chipGroupCategories.removeAllViews();
+
+        addCategoryChip("Tất cả", "all", true);
+
+        db.collection("categories")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                        String categoryName = doc.getString("name");
+                        String categoryId = doc.getString("id");
+                        if (categoryName != null && categoryId != null) {
+                            addCategoryChip(categoryName, categoryId, false);
+                        }
+                    }
+                })
+                .addOnFailureListener(e -> Log.e(TAG, "Lỗi khi tải danh mục", e));
 
         chipGroupCategories.setOnCheckedChangeListener((group, checkedId) -> {
-            if (checkedId == R.id.chipAll) {
+            if (checkedId == -1) {
                 currentCategory = "all";
-            } else if (checkedId == R.id.chipSushi) {
-                currentCategory = "sushi";
-            } else if (checkedId == R.id.chipSoup) {
-                currentCategory = "soup";
-            } else if (checkedId == R.id.chipDrink) {
-                currentCategory = "drink";
             } else {
-                currentCategory = "all";
+                Chip selectedChip = findViewById(checkedId);
+                if (selectedChip != null) {
+                    currentCategory = selectedChip.getTag().toString();
+                }
             }
             applyFilters();
         });
+    }
+
+    private void addCategoryChip(String name, String id, boolean isChecked) {
+        Chip chip = new Chip(this);
+        chip.setText(name);
+        chip.setTag(id);
+        chip.setCheckable(true);
+        chip.setChecked(isChecked);
+        chip.setId(android.view.View.generateViewId());
+
+        chipGroupCategories.addView(chip);
     }
 
     private void applyFilters() {
@@ -197,8 +256,9 @@ public class MainActivity extends BaseActivity {
 
         foodList.clear();
         for (Food food : fullFoodList) {
-            boolean matchCategory = currentCategory.equals("all") ||
-                    (food.getType() != null && food.getType().equalsIgnoreCase(currentCategory));
+            String foodCategory = food.getCategory() != null ? food.getCategory() : "";
+
+            boolean matchCategory = currentCategory.equals("all") || foodCategory.equalsIgnoreCase(currentCategory);
             boolean matchSearch = currentSearchText.isEmpty() ||
                     (food.getName() != null && food.getName().toLowerCase().contains(currentSearchText.toLowerCase()));
 

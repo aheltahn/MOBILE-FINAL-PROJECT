@@ -15,22 +15,29 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FinalProjectMẫu">
-
+        <activity
+            android:name=".fishiohouse.activities.OrderTrackingActivity"
+            android:exported="false" />
         <activity
             android:name=".fishiohouse.activities.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity android:name=".fishiohouse.activities.RegisterActivity" />
         <activity android:name=".fishiohouse.activities.MainActivity" />
         <activity android:name=".fishiohouse.activities.CartActivity" />
         <activity android:name=".fishiohouse.activities.OrderHistoryActivity" />
         <activity android:name=".fishiohouse.activities.ProfileActivity" />
         <activity android:name=".fishiohouse.activities.HomeActivity" />
+        <activity android:name=".fishiohouse.activities.VoucherListActivity" />
+        <!-- ==================================================== -->
+        <!-- ==== ĐÃ THÊM KHAI BÁO CHO CHECKOUTACTIVITY VÀO ĐÂY ==== -->
+        <activity android:name=".fishiohouse.activities.CheckoutActivity" />
+        <!-- ==================================================== -->
 
     </application>
 
