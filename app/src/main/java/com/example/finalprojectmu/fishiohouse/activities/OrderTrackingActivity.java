@@ -18,16 +18,23 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 
-// SỬA Ở ĐÂY: Có thể kế thừa từ BaseActivity nếu bạn muốn header chung
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class OrderTrackingActivity extends BaseActivity {
 
     private TextView textViewOrderId, textProcessing, textShipping, textDelivered;
+    // Thêm các TextView mới cho chi tiết đơn hàng
+    private TextView tvOrderDate, tvOrderTotal, tvOrderAddress;
+    
     private ImageView iconProcessing, iconShipping, iconDelivered;
     private View line1, line2;
     private Button buttonBackToHome;
 
     private FirebaseFirestore db;
-    private ListenerRegistration orderListener; // Biến để lắng nghe sự thay đổi
+    private ListenerRegistration orderListener;
     private String orderId;
 
     @Override
@@ -37,23 +44,21 @@ public class OrderTrackingActivity extends BaseActivity {
 
         db = FirebaseFirestore.getInstance();
 
-        // 1. Ánh xạ các View từ layout
         initViews();
 
-        // 2. Lấy orderId được gửi từ OrderHistoryActivity
         orderId = getIntent().getStringExtra("ORDER_ID");
         if (orderId == null || orderId.isEmpty()) {
             Toast.makeText(this, "Không tìm thấy mã đơn hàng", Toast.LENGTH_SHORT).show();
-            finish(); // Đóng activity nếu không có ID
+            finish();
             return;
         }
 
-        // Hiển thị mã đơn hàng lên giao diện
         textViewOrderId.setText(orderId.toUpperCase());
 
-        // 3. Thiết lập sự kiện cho nút "Quay về trang chủ"
         buttonBackToHome.setOnClickListener(v -> {
-            // Có thể đổi thành finish() nếu chỉ muốn quay lại trang lịch sử
+            Intent intent = new Intent(OrderTrackingActivity.this, HomeActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
             finish();
         });
     }
@@ -69,16 +74,19 @@ public class OrderTrackingActivity extends BaseActivity {
         line1 = findViewById(R.id.line1);
         line2 = findViewById(R.id.line2);
         buttonBackToHome = findViewById(R.id.buttonBackToHome);
+        
+        // Ánh xạ các view mới
+        tvOrderDate = findViewById(R.id.tvOrderDate);
+        tvOrderTotal = findViewById(R.id.tvOrderTotal);
+        tvOrderAddress = findViewById(R.id.tvOrderAddress);
     }
 
-    // 4. Bắt đầu lắng nghe khi Activity được hiển thị
     @Override
     protected void onStart() {
         super.onStart();
         if (orderId != null) {
             DocumentReference orderRef = db.collection("orders").document(orderId);
 
-            // addSnapshotListener sẽ tự động chạy lại mỗi khi dữ liệu của đơn hàng này thay đổi
             orderListener = orderRef.addSnapshotListener(this, (snapshot, e) -> {
                 if (e != null) {
                     Toast.makeText(OrderTrackingActivity.this, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -86,18 +94,40 @@ public class OrderTrackingActivity extends BaseActivity {
                 }
 
                 if (snapshot != null && snapshot.exists()) {
-                    // Lấy ra trạng thái (status) từ document
                     String status = snapshot.getString("status");
                     if (status != null) {
-                        // Gọi hàm cập nhật giao diện với trạng thái mới nhất
                         updateStatusUI(status);
                     }
+                    
+                    // Cập nhật thông tin chi tiết đơn hàng
+                    updateOrderDetails(snapshot);
                 }
             });
         }
     }
 
-    // 5. Dừng lắng nghe khi Activity bị ẩn đi để tiết kiệm tài nguyên
+    private void updateOrderDetails(com.google.firebase.firestore.DocumentSnapshot snapshot) {
+        // Lấy ngày đặt
+        if (snapshot.getDate("createdAt") != null) {
+            Date date = snapshot.getDate("createdAt");
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", new Locale("vi", "VN"));
+            tvOrderDate.setText("Ngày đặt: " + sdf.format(date));
+        }
+
+        // Lấy tổng tiền
+        Double total = snapshot.getDouble("totalPrice");
+        if (total != null) {
+            NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+            tvOrderTotal.setText("Tổng tiền: " + currencyFormatter.format(total));
+        }
+
+        // Lấy địa chỉ
+        String address = snapshot.getString("shippingAddress");
+        if (address != null) {
+            tvOrderAddress.setText("Địa chỉ: " + address);
+        }
+    }
+
     @Override
     protected void onStop() {
         super.onStop();
@@ -106,13 +136,9 @@ public class OrderTrackingActivity extends BaseActivity {
         }
     }
 
-    // 6. Hàm quan trọng nhất: Cập nhật giao diện timeline dựa vào trạng thái
     private void updateStatusUI(String status) {
-        // Reset tất cả về trạng thái chưa hoàn thành (màu xám)
         resetStatusUI();
 
-        // Dùng switch-case để kích hoạt các bước tương ứng
-        // Lưu ý: không có 'break' để các trạng thái sau kích hoạt các trạng thái trước đó
         switch (status) {
             case "Delivered":
                 updateStep(textDelivered, iconDelivered, null, true);
@@ -122,43 +148,33 @@ public class OrderTrackingActivity extends BaseActivity {
                 updateStep(textProcessing, iconProcessing, line1, true);
                 break;
             case "Cancelled":
-                // Xử lý riêng cho trạng thái "Đã hủy" (nếu có)
                 textProcessing.setText("Đơn hàng đã bị hủy");
-                textProcessing.setTextColor(ContextCompat.getColor(this, R.color.theme_accent_red)); // Giả sử bạn có màu đỏ
+                textProcessing.setTextColor(ContextCompat.getColor(this, android.R.color.holo_red_dark));
                 break;
         }
     }
 
-    // Hàm phụ: Đưa một bước về trạng thái ban đầu (chưa kích hoạt)
     private void resetStatusUI() {
         updateStep(textProcessing, iconProcessing, line1, false);
         updateStep(textShipping, iconShipping, line2, false);
         updateStep(textDelivered, iconDelivered, null, false);
-        // Reset lại text nếu có trạng thái hủy
         textProcessing.setText("Đang xử lý");
     }
 
-    // Hàm phụ: Cập nhật màu sắc, chữ đậm cho một bước
     private void updateStep(TextView textView, ImageView imageView, View lineView, boolean isActive) {
-        // Màu cho trạng thái active (hoàn thành)
         int activeColor = ContextCompat.getColor(this, R.color.theme_text_primary);
         int activeLineColor = ContextCompat.getColor(this, R.color.theme_accent_orange);
-
-        // Màu cho trạng thái inactive (chưa tới)
         int inactiveColor = ContextCompat.getColor(this, R.color.theme_text_secondary);
 
         if (isActive) {
             textView.setTextColor(activeColor);
             textView.setTypeface(null, Typeface.BOLD);
-            // Bạn có thể đổi màu icon ở đây nếu muốn
-            // Ví dụ: imageView.setColorFilter(activeLineColor);
             if (lineView != null) {
                 lineView.setBackgroundColor(activeLineColor);
             }
         } else {
             textView.setTextColor(inactiveColor);
             textView.setTypeface(null, Typeface.NORMAL);
-            // imageView.clearColorFilter();
             if (lineView != null) {
                 lineView.setBackgroundColor(inactiveColor);
             }

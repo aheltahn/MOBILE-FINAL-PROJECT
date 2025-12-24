@@ -50,7 +50,6 @@ public class LoginActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // Kiểm tra nếu đã đăng nhập thì chuyển luôn vào Home
         if (mAuth.getCurrentUser() != null) {
             updateUI(mAuth.getCurrentUser());
             return;
@@ -60,7 +59,8 @@ public class LoginActivity extends AppCompatActivity {
 
         // Cấu hình Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
+                // SỬA LỖI: CUNG CẤP WEB CLIENT ID TRỰC TIẾP
+                .requestIdToken("123329529766-ph4hmnbr2k8avttl8oikvmn9u10dhukn.apps.googleusercontent.com")
                 .requestEmail()
                 .build();
 
@@ -73,7 +73,6 @@ public class LoginActivity extends AppCompatActivity {
         buttonGoogleLogin = findViewById(R.id.buttonGoogleLogin);
         textViewGoToRegister = findViewById(R.id.textViewGoToRegister);
 
-        // Tải ảnh nền
         String loginImageUrl = "https://i.pinimg.com/736x/9b/7d/cc/9b7dcc40ab054e585ad7f57060c1d9f2.jpg";
         Picasso.get().load(loginImageUrl).into(imageViewBackground);
 
@@ -95,15 +94,12 @@ public class LoginActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        // Kết quả trả về từ Intent đăng nhập Google
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
-                // Đăng nhập Google thành công, xác thực với Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account.getIdToken());
             } catch (ApiException e) {
-                // Đăng nhập Google thất bại
                 Log.w(TAG, "Google sign in failed", e);
                 Toast.makeText(this, "Đăng nhập Google thất bại.", Toast.LENGTH_SHORT).show();
             }
@@ -115,16 +111,11 @@ public class LoginActivity extends AppCompatActivity {
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        // Đăng nhập thành công
                         FirebaseUser user = mAuth.getCurrentUser();
                         Toast.makeText(LoginActivity.this, "Đăng nhập Google thành công", Toast.LENGTH_SHORT).show();
-                        
-                        // Lưu thông tin user vào Firestore nếu là user mới
                         saveUserToFirestore(user);
-                        
                         updateUI(user);
                     } else {
-                        // Thất bại
                         Toast.makeText(LoginActivity.this, "Xác thực Firebase thất bại.", Toast.LENGTH_SHORT).show();
                         updateUI(null);
                     }
@@ -134,16 +125,14 @@ public class LoginActivity extends AppCompatActivity {
     private void saveUserToFirestore(FirebaseUser user) {
         if (user == null) return;
         
-        // Kiểm tra xem user đã tồn tại trong Firestore chưa để tránh ghi đè dữ liệu cũ
         db.collection("users").document(user.getUid()).get()
             .addOnSuccessListener(documentSnapshot -> {
                 if (!documentSnapshot.exists()) {
-                    // Nếu chưa có thì tạo mới
                     Map<String, Object> userData = new HashMap<>();
                     userData.put("email", user.getEmail());
                     userData.put("name", user.getDisplayName());
                     userData.put("avatarUrl", user.getPhotoUrl() != null ? user.getPhotoUrl().toString() : "");
-                    userData.put("role", "customer"); // Mặc định role là customer
+                    userData.put("role", "customer");
 
                     db.collection("users").document(user.getUid()).set(userData)
                             .addOnFailureListener(e -> Log.w(TAG, "Error writing document", e));

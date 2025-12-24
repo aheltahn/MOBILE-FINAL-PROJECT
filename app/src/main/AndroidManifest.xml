@@ -50,6 +50,13 @@
         <activity
             android:name=".fishiohouse.activities.CartActivity"
             android:exported="false" />
+        <activity
+            android:name=".fishiohouse.activities.CheckoutActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".fishiohouse.activities.VoucherListActivity"
+            android:exported="false" />
 
         <activity
             android:name=".fishiohouse.activities.OrderHistoryActivity"

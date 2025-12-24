@@ -14,86 +14,24 @@
       },
       "oauth_client": [
         {
-          "client_id": "123329529766-8lkmb4igkjmuesjpe1ddlcduf37sqtnl.apps.googleusercontent.com",
+          "client_id": "123329529766-b0usn2noree4cp21vrkn7bss6l5goffi.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.finalprojectmu",
             "certificate_hash": "6f9baa255e72188f304bed6e0b715c0752220f99"
           }
-        },
-        {
-          "client_id": "123329529766-f9772q237vmttg4ovo3hgo3hm8qe8vhr.apps.googleusercontent.com",
-          "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCxEzKLttSC0JNmmAsmEZYlCWfSBrRSejM"
+          "current_key": "AIzaSyBeN_fMWKBRQ8Fy9CSdWvBBdeKu4fKbBYw"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "123329529766-f9772q237vmttg4ovo3hgo3hm8qe8vhr.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:123329529766:android:26a8e01386bba988613167",
-        "android_client_info": {
-          "package_name": "com.example.lesson8"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "123329529766-f9772q237vmttg4ovo3hgo3hm8qe8vhr.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCxEzKLttSC0JNmmAsmEZYlCWfSBrRSejM"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "123329529766-f9772q237vmttg4ovo3hgo3hm8qe8vhr.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:123329529766:android:51d329b521920b4e613167",
-        "android_client_info": {
-          "package_name": "vn.edu.ueh.thanhdnh.firebase_example"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "123329529766-f9772q237vmttg4ovo3hgo3hm8qe8vhr.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCxEzKLttSC0JNmmAsmEZYlCWfSBrRSejM"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "123329529766-f9772q237vmttg4ovo3hgo3hm8qe8vhr.apps.googleusercontent.com",
+              "client_id": "123329529766-ph4hmnbr2k8avttl8oikvmn9u10dhukn.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

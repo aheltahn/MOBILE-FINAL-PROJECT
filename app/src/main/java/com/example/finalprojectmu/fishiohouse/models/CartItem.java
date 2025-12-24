@@ -1,10 +1,9 @@
 package com.example.finalprojectmu.fishiohouse.models;
 
 import com.google.firebase.firestore.Exclude;
-import java.io.Serializable; // <<===== 1. THÊM DÒNG NÀY
+import java.io.Serializable;
 
-//                                               vvvvvvvvvvvvvvvvvvvvvvvvv
-public class CartItem implements Serializable { // <<===== 2. THÊM VÀO ĐÂY
+public class CartItem implements Serializable {
     @Exclude
     private String foodId;
 
@@ -13,12 +12,11 @@ public class CartItem implements Serializable { // <<===== 2. THÊM VÀO ĐÂY
     private long quantity;
     private String imageUrl;
 
-    @Exclude // Không lưu trường này vào Firestore
-    private boolean isSelected = true; // Mặc định là được chọn
+    @Exclude
+    private boolean isSelected = true;
 
     public CartItem() {}
 
-    // Getters and Setters (Giữ nguyên không đổi)
     public String getFoodId() {
         return foodId;
     }

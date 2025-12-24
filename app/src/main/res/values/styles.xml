@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Style cho các mục trong menu của trang Profile -->
+    <style name="ProfileMenuItem" parent="Widget.AppCompat.TextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/theme_text_primary</item>
+        <item name="drawableEndCompat">@drawable/ic_chevron_right</item>
+        <item name="drawableTint">@color/theme_text_secondary</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+    </style>
+
+    <!-- Style cho đường kẻ phân cách -->
+    <style name="Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/theme_dark_background</item>
+        <item name="android:layout_marginStart">16dp</item>
+    </style>
+
+    <!-- Style mới cho ô nhập liệu ở trang Checkout -->
+    <style name="MyTextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="android:textColorHint">@color/theme_text_secondary</item>
+        <item name="boxStrokeColor">@color/theme_accent_orange</item>
+        <item name="hintTextColor">@color/white</item>
+    </style>
+
+</resources>
