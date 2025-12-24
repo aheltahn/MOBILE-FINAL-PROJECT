@@ -2,6 +2,7 @@ package com.example.finalprojectmu.fishiohouse.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -33,9 +34,8 @@ import java.util.Map;
 
 public class CartActivity extends AppCompatActivity implements CartAdapter.OnCartActionListener {
 
-    // ================== THAY ĐỔI 1: THÊM BIẾN INSTANCE ==================
+    private static final String TAG = "CartActivity";
     private static CartActivity instance;
-    // ===================================================================
 
     private RecyclerView recyclerView;
     private TextView txtTotal;
@@ -49,18 +49,14 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
 
     private final Map<String, Boolean> selectionState = new HashMap<>();
 
-    // ================== THAY ĐỔI 2: THÊM HÀM LẤY INSTANCE ==================
     public static CartActivity getInstance() {
         return instance;
     }
-    // =====================================================================
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // ================== THAY ĐỔI 3: GÁN INSTANCE ==================
         instance = this;
-        // ================================================================
         setContentView(R.layout.activity_cart);
 
         Toolbar toolbar = findViewById(R.id.toolbar_cart);
@@ -83,8 +79,6 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
         btnPlaceOrder.setText("Thanh Toán");
         btnPlaceOrder.setOnClickListener(v -> goToCheckout());
     }
-
-    // --- CÁC HÀM CÒN LẠI GIỮ NGUYÊN KHÔNG ĐỔI ---
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -158,9 +152,14 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
             return;
         }
 
-        Intent intent = new Intent(CartActivity.this, CheckoutActivity.class);
-        intent.putExtra("SELECTED_ITEMS", selectedItems);
-        startActivity(intent);
+        try {
+            Intent intent = new Intent(CartActivity.this, CheckoutActivity.class);
+            intent.putExtra("SELECTED_ITEMS", selectedItems);
+            startActivity(intent);
+        } catch (Exception e) {
+            Log.e(TAG, "Lỗi khi chuyển sang CheckoutActivity", e);
+            Toast.makeText(this, "Lỗi nghiêm trọng: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 
     private void showDeleteAllConfirmationDialog() {

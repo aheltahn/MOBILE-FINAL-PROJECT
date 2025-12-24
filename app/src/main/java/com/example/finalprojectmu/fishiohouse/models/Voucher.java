@@ -6,7 +6,8 @@ public class Voucher implements Serializable {
     private String code;
     private String description;
     private double discountValue;
-    private double minOrderValue;// Firebase cần một constructor rỗng
+    private double minOrderValue;
+
     public Voucher() {}
 
     public String getCode() {

@@ -21,97 +21,108 @@
             app:titleTextColor="@color/white" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.core.widget.NestedScrollView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="80dp"
+        android:orientation="horizontal"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="8dp">
+        <!-- Cột trái: Form thông tin -->
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.2">
 
-            <!-- PHẦN THÔNG TIN GIAO HÀNG -->
-            <com.google.android.material.card.MaterialCardView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:backgroundTint="#1C1C1E"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="0dp"
-                app:contentPadding="16dp">
+                android:orientation="vertical"
+                android:padding="16dp">
 
-                <LinearLayout
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:backgroundTint="#1C1C1E"
+                    app:cardCornerRadius="12dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Thông tin giao hàng"
-                        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-                        android:textColor="@color/white"
-                        android:textStyle="bold" />
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/MyTextInputLayout"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:hint="Tên người nhận">
+                        android:orientation="vertical"
+                        android:padding="16dp">
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/edt_customer_name"
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Thông tin giao hàng"
+                            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                            android:textColor="@color/white"
+                            android:textStyle="bold" />
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/MyTextInputLayout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="textPersonName"
-                            android:textColor="@color/white" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                            android:layout_marginTop="16dp"
+                            android:hint="Tên người nhận">
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/MyTextInputLayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:hint="Số điện thoại">
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/edt_customer_name"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="textPersonName"
+                                android:textColor="@color/white" />
+                        </com.google.android.material.textfield.TextInputLayout>
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/edt_phone"
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/MyTextInputLayout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="phone"
-                            android:textColor="@color/white" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                            android:layout_marginTop="8dp"
+                            android:hint="Số điện thoại">
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/MyTextInputLayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:hint="Địa chỉ (Số nhà, đường, phường/xã...)">
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/edt_phone"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="phone"
+                                android:textColor="@color/white" />
+                        </com.google.android.material.textfield.TextInputLayout>
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/edt_address"
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/MyTextInputLayout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="top"
-                            android:inputType="textMultiLine"
-                            android:minLines="2"
-                            android:textColor="@color/white" />
-                    </com.google.android.material.textfield.TextInputLayout>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                            android:layout_marginTop="8dp"
+                            android:hint="Địa chỉ">
 
-            <!-- PHẦN TÓM TẮT ĐƠN HÀNG -->
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/edt_address"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="top"
+                                android:inputType="textMultiLine"
+                                android:minLines="2"
+                                android:textColor="@color/white" />
+                        </com.google.android.material.textfield.TextInputLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <!-- Cột phải: Tóm tắt và đặt hàng -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:padding="16dp">
+
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:backgroundTint="#1C1C1E"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="0dp"
                 app:contentPadding="16dp">
 
                 <LinearLayout
@@ -178,6 +189,7 @@
                         android:paddingVertical="8dp">
 
                         <ImageView
+                            android:id="@+id/icon_voucher"
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:layout_alignParentStart="true"
@@ -192,13 +204,13 @@
                             android:layout_centerVertical="true"
                             android:layout_marginStart="16dp"
                             android:layout_marginEnd="8dp"
-                            android:layout_toStartOf="@+id/icon_chevron_right_checkout"
-                            android:layout_toEndOf="@+id/icon_voucher_checkout"
+                            android:layout_toStartOf="@id/icon_chevron_right"
+                            android:layout_toEndOf="@id/icon_voucher"
                             android:text="Chọn voucher của bạn"
                             android:textColor="@color/white" />
 
                         <ImageView
-                            android:id="@+id/icon_chevron_right_checkout"
+                            android:id="@+id/icon_chevron_right"
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:layout_alignParentEnd="true"
@@ -256,59 +268,61 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
 
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:backgroundTint="#1C1C1E"
-        app:cardElevation="8dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="12dp">
-
-            <LinearLayout
-                android:layout_width="0dp"
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:orientation="vertical">
+                android:backgroundTint="#1C1C1E">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Tổng cộng"
-                    android:textColor="#A9A9A9"
-                    android:textSize="12sp" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="12dp">
 
-                <TextView
-                    android:id="@+id/txt_total_amount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/theme_accent_orange"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    tools:text="165.000 ₫" />
-            </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:orientation="vertical">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_confirm_order"
-                android:layout_width="wrap_content"
-                android:layout_height="60dp"
-                android:layout_marginStart="16dp"
-                android:backgroundTint="@color/theme_accent_orange"
-                android:paddingLeft="32dp"
-                android:paddingRight="32dp"
-                android:text="Đặt Hàng"
-                android:textColor="@color/black"
-                app:cornerRadius="8dp" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Tổng cộng"
+                            android:textColor="#A9A9A9"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/txt_total_amount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/theme_accent_orange"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            tools:text="165.000 ₫" />
+                    </LinearLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_confirm_order"
+                        android:layout_width="wrap_content"
+                        android:layout_height="60dp"
+                        android:layout_marginStart="16dp"
+                        android:backgroundTint="@color/theme_accent_orange"
+                        android:paddingLeft="32dp"
+                        android:paddingRight="32dp"
+                        android:text="Đặt Hàng"
+                        android:textColor="@color/black"
+                        app:cornerRadius="8dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

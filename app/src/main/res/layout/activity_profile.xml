@@ -79,6 +79,17 @@
                     android:text="email@example.com"
                     android:textSize="14sp"
                     android:textColor="@color/theme_text_secondary"/>
+
+                <!-- THÊM MỤC HIỂN THỊ SỐ ĐIỆN THOẠI -->
+                <TextView
+                    android:id="@+id/tvPhone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Số điện thoại..."
+                    android:textSize="14sp"
+                    android:textColor="@color/theme_text_secondary"
+                    android:layout_marginTop="4dp"/>
+
             </LinearLayout>
 
             <!-- Mục Chức năng: Tài khoản -->

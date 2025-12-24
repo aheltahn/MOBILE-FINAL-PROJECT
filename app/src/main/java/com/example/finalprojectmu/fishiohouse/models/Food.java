@@ -5,32 +5,23 @@ import java.io.Serializable;
 
 public class Food implements java.io.Serializable {
     @Exclude
-    private String id; // ID này sẽ không được lưu vào Firestore, chỉ dùng trong app
+    private String id;
 
     private String name;
     private double price;
     private String description;
     private String imageUrl;
+    private String category; // Trường này tương đương với 'type'
 
-    // ================== THAY ĐỔI QUAN TRỌNG ==================
-    // Đổi tên 'type' thành 'category' để khớp với tên trường trên Firebase
-    private String category;
-    // =======================================================
-
-    // Bắt buộc phải có một constructor rỗng để Firestore có thể tự động chuyển đổi document thành đối tượng Food
     public Food() {}
 
-    // Constructor đầy đủ (có thể dùng khi bạn tạo món ăn mới)
     public Food(String name, double price, String description, String imageUrl, String category) {
         this.name = name;
         this.price = price;
         this.description = description;
         this.imageUrl = imageUrl;
-        this.category = category; // Sửa ở đây
+        this.category = category;
     }
-
-    // --- Getters and Setters ---
-    // Các hàm getter/setter cho các thuộc tính khác được giữ nguyên
 
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
@@ -47,8 +38,17 @@ public class Food implements java.io.Serializable {
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 
-    // ================== SỬA GETTER VÀ SETTER CHO PHÙ HỢP ==================
     public String getCategory() { return category; }
     public void setCategory(String category) { this.category = category; }
-    // =====================================================================
+
+    // Thêm phương thức getType để tương thích với code cũ
+    // Nó sẽ trả về giá trị của category
+    public String getType() {
+        return category;
+    }
+
+    // Thêm setType luôn cho chắc chắn
+    public void setType(String type) {
+        this.category = type;
+    }
 }

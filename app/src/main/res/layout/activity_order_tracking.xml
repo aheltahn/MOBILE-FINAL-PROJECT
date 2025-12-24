@@ -35,16 +35,17 @@
 
         <TextView
             android:id="@+id/textViewOrderId"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:text="LOADING..."
             android:textColor="@color/theme_accent_orange"
             android:textStyle="bold"
             app:layout_constraintBaseline_toBaselineOf="@id/textViewOrderIdLabel"
-            app:layout_constraintStart_toEndOf="@id/textViewOrderIdLabel" />
+            app:layout_constraintStart_toEndOf="@id/textViewOrderIdLabel"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
-        <!-- === TRẠNG THÁI 1: ĐANG XỬ LÝ === -->
+        <!-- ... (Các bước trạng thái giữ nguyên) ... -->
         <ImageView
             android:id="@+id/iconProcessing"
             android:layout_width="40dp"
@@ -53,7 +54,6 @@
             android:src="@drawable/ic_status_processing"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textViewOrderIdLabel" />
-
         <TextView
             android:id="@+id/textProcessing"
             android:layout_width="wrap_content"
@@ -66,7 +66,6 @@
             app:layout_constraintBottom_toBottomOf="@id/iconProcessing"
             app:layout_constraintStart_toEndOf="@id/iconProcessing"
             app:layout_constraintTop_toTopOf="@id/iconProcessing" />
-
         <View
             android:id="@+id/line1"
             android:layout_width="2dp"
@@ -75,8 +74,6 @@
             app:layout_constraintEnd_toEndOf="@id/iconProcessing"
             app:layout_constraintStart_toStartOf="@id/iconProcessing"
             app:layout_constraintTop_toBottomOf="@id/iconProcessing" />
-
-        <!-- === TRẠNG THÁI 2: ĐANG GIAO HÀNG === -->
         <ImageView
             android:id="@+id/iconShipping"
             android:layout_width="40dp"
@@ -84,7 +81,6 @@
             android:src="@drawable/ic_status_shipping"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/line1" />
-
         <TextView
             android:id="@+id/textShipping"
             android:layout_width="wrap_content"
@@ -93,11 +89,9 @@
             android:text="Đang giao hàng"
             android:textColor="@color/theme_text_secondary"
             android:textSize="18sp"
-            android:textStyle="normal"
             app:layout_constraintBottom_toBottomOf="@id/iconShipping"
             app:layout_constraintStart_toEndOf="@id/iconShipping"
             app:layout_constraintTop_toTopOf="@id/iconShipping" />
-
         <View
             android:id="@+id/line2"
             android:layout_width="2dp"
@@ -106,8 +100,6 @@
             app:layout_constraintEnd_toEndOf="@id/iconShipping"
             app:layout_constraintStart_toStartOf="@id/iconShipping"
             app:layout_constraintTop_toBottomOf="@id/iconShipping" />
-
-        <!-- === TRẠNG THÁI 3: GIAO HÀNG THÀNH CÔNG === -->
         <ImageView
             android:id="@+id/iconDelivered"
             android:layout_width="40dp"
@@ -115,7 +107,6 @@
             android:src="@drawable/ic_status_delivered"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/line2" />
-
         <TextView
             android:id="@+id/textDelivered"
             android:layout_width="wrap_content"
@@ -124,17 +115,66 @@
             android:text="Giao thành công"
             android:textColor="@color/theme_text_secondary"
             android:textSize="18sp"
-            android:textStyle="normal"
             app:layout_constraintBottom_toBottomOf="@id/iconDelivered"
             app:layout_constraintStart_toEndOf="@id/iconDelivered"
             app:layout_constraintTop_toTopOf="@id/iconDelivered" />
 
+        <!-- THÊM MỚI: Khung thông tin chi tiết đơn hàng -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardOrderDetails"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            app:cardBackgroundColor="@color/theme_surface"
+            app:cardCornerRadius="12dp"
+            app:contentPadding="16dp"
+            app:layout_constraintTop_toBottomOf="@id/iconDelivered">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Chi tiết đơn hàng"
+                    android:textColor="@color/theme_text_primary"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvOrderDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:textColor="@color/theme_text_secondary"
+                    tools:text="Ngày đặt: 23/12/2025" />
+
+                <TextView
+                    android:id="@+id/tvOrderTotal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/theme_text_secondary"
+                    tools:text="Tổng tiền: 250.000đ" />
+
+                <TextView
+                    android:id="@+id/tvOrderAddress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/theme_text_secondary"
+                    tools:text="Địa chỉ: 123 Đường ABC, Phường XYZ, Quận 1, TP. HCM" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <Button
             android:id="@+id/buttonBackToHome"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="48dp"
+            android:layout_marginTop="32dp"
             android:backgroundTint="@color/theme_accent_orange"
             android:padding="12dp"
             android:text="Quay về trang chủ"
@@ -142,7 +182,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/iconDelivered" />
+            app:layout_constraintTop_toBottomOf="@id/cardOrderDetails" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

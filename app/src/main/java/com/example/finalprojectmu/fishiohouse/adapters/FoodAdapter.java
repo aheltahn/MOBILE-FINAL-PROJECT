@@ -53,11 +53,9 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
 
         holder.name.setText(food.getName());
 
-        // Định dạng giá tiền
         NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
         holder.price.setText(currencyFormatter.format(food.getPrice()));
 
-        // Hiển thị mô tả (nếu có)
         if (food.getDescription() != null && !food.getDescription().isEmpty()) {
             holder.description.setText(food.getDescription());
             holder.description.setVisibility(View.VISIBLE);
@@ -65,7 +63,6 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
             holder.description.setVisibility(View.GONE);
         }
 
-        // Tải ảnh món ăn
         if (food.getImageUrl() != null && !food.getImageUrl().isEmpty()) {
             Picasso.get()
                     .load(food.getImageUrl())
@@ -78,14 +75,14 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
             holder.image.setImageResource(R.mipmap.ic_launcher);
         }
 
-        // === CLICK VÀO ẢNH MÓN ĂN → MỞ CHI TIẾT ===
-        holder.image.setOnClickListener(v -> {
+        // SỰ KIỆN CLICK VÀO CẢ ITEM
+        holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, FoodDetailActivity.class);
             intent.putExtra("FOOD_DETAIL", food);
             context.startActivity(intent);
         });
 
-        // === NÚT THÊM VÀO GIỎ HÀNG (giữ nguyên chức năng cũ) ===
+        // SỰ KIỆN CLICK NÚT THÊM VÀO GIỎ HÀNG
         holder.addToCartButton.setOnClickListener(v -> addToCart(food));
     }
 
@@ -95,10 +92,7 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
             return;
         }
 
-        DocumentReference cartItemRef = db.collection("carts")
-                .document(uid)
-                .collection("items")
-                .document(food.getId());
+        DocumentReference cartItemRef = db.collection("carts").document(uid).collection("items").document(food.getId());
 
         db.runTransaction((Transaction.Function<Void>) transaction -> {
             DocumentSnapshot snapshot = transaction.get(cartItemRef);
@@ -132,7 +126,7 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
     public static class FoodViewHolder extends RecyclerView.ViewHolder {
         ImageView image;
         TextView name, price, description;
-        ImageView addToCartButton; // Đây là ImageView (ic_add_circle)
+        ImageView addToCartButton;
 
         public FoodViewHolder(@NonNull View itemView) {
             super(itemView);

@@ -1,20 +1,22 @@
 package com.example.finalprojectmu.fishiohouse.activities;
 
-import android.app.Activity; // THÊM IMPORT NÀY
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.finalprojectmu.R;
 import com.example.finalprojectmu.fishiohouse.adapters.FoodAdapter;
-import com.example.finalprojectmu.fishiohouse.data.DatabaseHelper;
-import com.example.finalprojectmu.fishiohouse.data.ProductEntity;
 import com.example.finalprojectmu.fishiohouse.models.Food;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -23,18 +25,16 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class MainActivity extends BaseActivity {
     private static final String TAG = "MainActivity";
 
-    // ================== THÊM CÁC BIẾN QUẢN LÝ ACTIVITY ==================
     private static MainActivity instance;
     public static ArrayList<Activity> activityList = new ArrayList<>();
-    // =====================================================================
 
     private FirebaseFirestore db;
-    private DatabaseHelper dbHelper; // Thêm DatabaseHelper
     private RecyclerView recyclerView;
     private ArrayList<Food> foodList;
     private ArrayList<Food> fullFoodList;
@@ -42,40 +42,38 @@ public class MainActivity extends BaseActivity {
     private FloatingActionButton fabCart;
     private ChipGroup chipGroupCategories;
     private SearchView searchView;
+    private Spinner spinnerSort;
 
     private String currentCategory = "all";
     private String currentSearchText = "";
+    private int currentSortMode = 0;
 
-    // ================== THÊM HÀM LẤY INSTANCE ==================
     public static MainActivity getInstance() {
         return instance;
     }
-    // ==========================================================
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // ================== THÊM CÁC DÒNG QUẢN LÝ ==================
         instance = this;
-        activityList.add(this); // Thêm chính nó vào danh sách
-        // =========================================================
+        activityList.add(this);
 
         setContentView(R.layout.activity_main);
-
+        
         db = FirebaseFirestore.getInstance();
 
         recyclerView = findViewById(R.id.recyclerViewFoods);
         fabCart = findViewById(R.id.fab_cart);
         chipGroupCategories = findViewById(R.id.chipGroupCategories);
         searchView = findViewById(R.id.search_view);
+        spinnerSort = findViewById(R.id.spinner_sort);
 
         foodList = new ArrayList<>();
         fullFoodList = new ArrayList<>();
         foodAdapter = new FoodAdapter(this, foodList);
         recyclerView.setAdapter(foodAdapter);
 
-        // === RESPONSIVE: TỰ ĐỘNG THAY ĐỔI SỐ CỘT THEO HƯỚNG MÀN HÌNH ===
         updateGridLayout();
 
         if (fabCart != null) {
@@ -85,37 +83,24 @@ public class MainActivity extends BaseActivity {
             });
         }
 
-        setupCategoryFilter();
+        loadCategoriesAndSetupFilter();
         setupSearch();
+        setupSortSpinner(); 
         loadFoodsFromFirestore();
     }
 
-    // Hàm này sẽ được gọi khi xoay màn hình (onConfigurationChanged) hoặc lúc khởi tạo
     private void updateGridLayout() {
         int orientation = getResources().getConfiguration().orientation;
         int spanCount = (orientation == Configuration.ORIENTATION_LANDSCAPE) ? 4 : 2;
         recyclerView.setLayoutManager(new GridLayoutManager(this, spanCount));
     }
 
-    // Để xử lý khi xoay màn hình mà không recreate Activity (tùy chọn, mượt hơn)
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        updateGridLayout(); // Cập nhật lại số cột khi xoay
-        chipGroupCategories = findViewById(R.id.chipGroupCategories);
-        loadCategoriesAndSetupFilter();
-
-        searchView = findViewById(R.id.search_view);
-        setupSearch();
-
-        // Bước 1: Load dữ liệu từ SQLite trước (để dùng offline)
-        loadFoodsFromLocal();
-
-        // Bước 2: Load dữ liệu từ Firestore (để lấy mới nhất và sync về local)
-        loadFoodsFromFirestore();
+        updateGridLayout();
     }
-
-    // ================== THÊM HÀM ĐÓNG ACTIVITY CON ==================
+    
     public void finishChildActivities() {
         for (Activity activity : activityList) {
             if (activity != null && !(activity instanceof MainActivity)) {
@@ -123,36 +108,35 @@ public class MainActivity extends BaseActivity {
             }
         }
         activityList.clear();
-        activityList.add(this); // Giữ lại MainActivity
+        activityList.add(this);
     }
-    // =============================================================
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        activityList.remove(this); // Xóa activity khỏi danh sách khi bị hủy
+        activityList.remove(this);
     }
 
-    // --- CÁC HÀM CÒN LẠI CỦA BẠN GIỮ NGUYÊN KHÔNG ĐỔI ---
-    // Hàm load dữ liệu từ SQLite
-    private void loadFoodsFromLocal() {
-        List<ProductEntity> localProducts = dbHelper.getAllProducts();
-        if (localProducts != null && !localProducts.isEmpty()) {
-            fullFoodList.clear();
-            for (ProductEntity entity : localProducts) {
-                Food food = new Food(
-                        entity.getName(),
-                        entity.getPrice(),
-                        entity.getDescription(),
-                        entity.getImageUrl(),
-                        entity.getType()
-                );
-                food.setId(entity.getId());
-                fullFoodList.add(food);
+    private void setupSortSpinner() {
+        if (spinnerSort == null) return;
+
+        String[] sortOptions = {"Mặc định", "Giá: Thấp đến Cao", "Giá: Cao đến Thấp"};
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.item_spinner_selected, sortOptions);
+        adapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
+        spinnerSort.setAdapter(adapter);
+
+        spinnerSort.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                currentSortMode = position;
+                applyFilters();
             }
-            applyFilters();
-            // Toast.makeText(this, "Đã tải " + fullFoodList.size() + " món ăn từ bộ nhớ máy", Toast.LENGTH_SHORT).show();
-        }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
     }
 
     private void loadFoodsFromFirestore() {
@@ -165,51 +149,22 @@ public class MainActivity extends BaseActivity {
 
                     if (value != null) {
                         fullFoodList.clear();
-                        List<ProductEntity> productsToSync = new ArrayList<>();
-
                         for (DocumentSnapshot doc : value.getDocuments()) {
                             try {
                                 Food food = doc.toObject(Food.class);
                                 if (food != null) {
                                     food.setId(doc.getId());
+                                    if (food.getType() == null) food.setType("other");
+                                    
                                     fullFoodList.add(food);
-
-                                    // Tạo đối tượng Entity để lưu vào SQLite
-                                    productsToSync.add(new ProductEntity(
-                                            food.getId(),
-                                            food.getName(),
-                                            food.getPrice(),
-                                            food.getDescription(),
-                                            food.getImageUrl(),
-                                            food.getType()
-                                    ));
                                 }
                             } catch (Exception e) {
                                 Log.e(TAG, "Lỗi khi chuyển đổi món ăn: " + doc.getId(), e);
                             }
                         }
-                        
-                        // Cập nhật giao diện
                         applyFilters();
-
-                        // Bước 3: Đồng bộ dữ liệu về SQLite (Sync)
-                        syncDataToLocal(productsToSync);
                     }
                 });
-    }
-
-    // Hàm lưu dữ liệu vào SQLite
-    private void syncDataToLocal(List<ProductEntity> products) {
-        new Thread(() -> {
-            // Xóa dữ liệu cũ để đảm bảo đồng bộ chính xác với server (bao gồm cả việc xóa món ăn)
-            dbHelper.deleteAllProducts();
-            
-            // Lưu dữ liệu mới
-            for (ProductEntity product : products) {
-                dbHelper.insertOrUpdateProduct(product);
-            }
-            Log.d(TAG, "Đã đồng bộ " + products.size() + " món ăn về SQLite");
-        }).start();
     }
 
     private void setupSearch() {
@@ -254,7 +209,7 @@ public class MainActivity extends BaseActivity {
                 currentCategory = "all";
             } else {
                 Chip selectedChip = findViewById(checkedId);
-                if (selectedChip != null) {
+                if (selectedChip != null && selectedChip.getTag() != null) {
                     currentCategory = selectedChip.getTag().toString();
                 }
             }
@@ -269,7 +224,6 @@ public class MainActivity extends BaseActivity {
         chip.setCheckable(true);
         chip.setChecked(isChecked);
         chip.setId(android.view.View.generateViewId());
-
         chipGroupCategories.addView(chip);
     }
 
@@ -277,19 +231,25 @@ public class MainActivity extends BaseActivity {
         if (fullFoodList == null) return;
 
         foodList.clear();
+        
         for (Food food : fullFoodList) {
-            boolean matchCategory = currentCategory.equals("all") ||
-                    (food.getType() != null && food.getType().equalsIgnoreCase(currentCategory));
-
-            String foodCategory = food.getCategory() != null ? food.getCategory() : "";
-
-            boolean matchCategory = currentCategory.equals("all") || foodCategory.equalsIgnoreCase(currentCategory);
+            String foodType = food.getType() != null ? food.getType() : "";
+            
+            boolean matchCategory = currentCategory.equals("all") || 
+                                    foodType.equalsIgnoreCase(currentCategory);
+                                    
             boolean matchSearch = currentSearchText.isEmpty() ||
                     (food.getName() != null && food.getName().toLowerCase().contains(currentSearchText));
 
             if (matchCategory && matchSearch) {
                 foodList.add(food);
             }
+        }
+
+        if (currentSortMode == 1) { // Giá tăng dần
+            Collections.sort(foodList, (f1, f2) -> Double.compare(f1.getPrice(), f2.getPrice()));
+        } else if (currentSortMode == 2) { // Giá giảm dần
+            Collections.sort(foodList, (f1, f2) -> Double.compare(f2.getPrice(), f1.getPrice()));
         }
 
         if (foodAdapter != null) {
