@@ -85,15 +85,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // [MỚI] Lấy sản phẩm theo loại (Category) từ SQLite
     public List<ProductEntity> getProductsByCategory(String categoryType) {
-        List<ProductEntity> productList = new ArrayList<>();
+        List<ProductEntity> results = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        
-        // Sử dụng câu lệnh WHERE để lọc
-        String query = "SELECT * FROM " + TABLE_PRODUCTS + " WHERE " + COLUMN_TYPE + " = ?";
-        Cursor cursor = db.rawQuery(query, new String[]{categoryType});
 
-        if (cursor.moveToFirst()) {
-            do {
+        // Cách viết mới: Sử dụng phương thức query() của Android thay vì rawQuery
+        // Nhìn chuyên nghiệp hơn và code gọn hơn
+        String[] columns = {COLUMN_ID, COLUMN_NAME, COLUMN_PRICE, COLUMN_DESCRIPTION, COLUMN_IMAGE_URL, COLUMN_TYPE};
+        String selection = COLUMN_TYPE + " = ?";
+        String[] selectionArgs = {categoryType};
+
+        Cursor cursor = db.query(
+                TABLE_PRODUCTS,  // Tên bảng
+                columns,         // Các cột cần lấy
+                selection,       // Mệnh đề WHERE
+                selectionArgs,   // Giá trị cho WHERE
+                null,            // GROUP BY
+                null,            // HAVING
+                null             // ORDER BY
+        );
+
+        // Duyệt cursor kiểu mới
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
                 String id = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ID));
                 String name = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME));
                 double price = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_PRICE));
@@ -101,13 +114,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String imageUrl = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_IMAGE_URL));
                 String type = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TYPE));
 
-                ProductEntity product = new ProductEntity(id, name, price, description, imageUrl, type);
-                productList.add(product);
-            } while (cursor.moveToNext());
+                results.add(new ProductEntity(id, name, price, description, imageUrl, type));
+            }
+            cursor.close();
         }
-        cursor.close();
         db.close();
-        return productList;
+        return results;
     }
 
     // Xóa tất cả dữ liệu (dùng khi muốn refresh hoàn toàn từ server)
